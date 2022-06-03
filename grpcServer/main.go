@@ -1,6 +1,7 @@
 package main
 
 import (
+	pb "GitHub/VideoFromPlaylist/proto"
 	"context"
 	"encoding/json"
 	"errors"
@@ -11,8 +12,6 @@ import (
 	"net"
 	"net/http"
 	"strconv"
-
-	pb "GitHub/VideoFromPlaylist/proto"
 
 	"google.golang.org/grpc"
 )
@@ -72,6 +71,7 @@ type resourceInfo struct {
 	VideoID string `json:"videoId"`
 }
 
+//Получение списка видео
 func GetPlaylistItems(playlistID string) ([]string, error) {
 	items, err := retrieveVideos(playlistID)
 	if err != nil {
@@ -92,6 +92,7 @@ func GetPlaylistItems(playlistID string) ([]string, error) {
 	return result, nil
 }
 
+//Получение информации о каждом видео из плейлиста
 func retrieveVideos(playlistID string) ([]Item, error) {
 	req, err := makeRequest(playlistID, 50)
 	if err != nil {
@@ -116,6 +117,7 @@ func retrieveVideos(playlistID string) ([]Item, error) {
 	return restResponse.Items, nil
 }
 
+//Создание запроса
 func makeRequest(playlistID string, maxResult int) (*http.Request, error) {
 	req, err := http.NewRequest("GET", YOUTUNE_PLAYLIST_ITEMS_URL, nil)
 	if err != nil {

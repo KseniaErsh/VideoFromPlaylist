@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Get Video From Playlist</title>
+</head>
+<body>
+        <ul>
+            {{range . }}
+                <li><b>{{ . }}</b></li>
+            {{ else }}
+                <b>Video not found</b>
+            {{ end }}
+        </ul>
+</body>
+</html>
