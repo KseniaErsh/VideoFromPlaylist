@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "./getVideoListService";
+
+service getVideoList{ 
+    rpc GetPlaylistItems(Request) returns (Response) {}
+}
+
+message Request {
+    string playlistID = 1; 
+}
+
+message Response {
+    repeated string videoList = 1; 
+}

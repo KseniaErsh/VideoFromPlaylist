@@ -1,13 +1,55 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
+	"net"
 	"net/http"
 	"strconv"
+
+	pb "GitHub/VideoFromPlaylist/proto"
+
+	"google.golang.org/grpc"
 )
+
+var (
+	port = flag.Int("port", 50051, "The server port")
+)
+
+type GRPCServer struct {
+	pb.UnsafeGetVideoListServer
+}
+
+func (s *GRPCServer) GetPlaylistItems(ctx context.Context, req *pb.Request) (*pb.Response, error) {
+	playlistId := req.GetPlaylistID()
+	log.Printf("Received: %v", playlistId)
+	videoInfo, err := GetPlaylistItems(playlistId)
+	if err != nil {
+		log.Fatalf(" %v", err)
+	}
+	return &pb.Response{
+		VideoList: videoInfo,
+	}, nil
+}
+
+func main() {
+	flag.Parse()
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	s := grpc.NewServer()
+	pb.RegisterGetVideoListServer(s, &GRPCServer{})
+	log.Printf("server listening at %v", lis.Addr())
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
+}
 
 const YOUTUNE_PLAYLIST_ITEMS_URL = "https://www.googleapis.com/youtube/v3/playlistItems"
 const YOUTUBE_API_KEY = "AIzaSyBvw_EMjvevGfsD9BlblDmlvFZ6fue7vIs"
@@ -30,7 +72,7 @@ type resourceInfo struct {
 	VideoID string `json:"videoId"`
 }
 
-func getPlaylistItems(playlistID string) ([]string, error) {
+func GetPlaylistItems(playlistID string) ([]string, error) {
 	items, err := retrieveVideos(playlistID)
 	if err != nil {
 		return nil, err
@@ -86,16 +128,4 @@ func makeRequest(playlistID string, maxResult int) (*http.Request, error) {
 	query.Add("key", YOUTUBE_API_KEY)
 	req.URL.RawQuery = query.Encode()
 	return req, nil
-}
-
-func main() {
-	var videoInfo []string
-	err := errors.New("")
-	videoInfo, err = getPlaylistItems("PLGtCetCIU8w2rFUP0CxdhRz9k-yRAmJcm")
-	if err != nil {
-		fmt.Println(err)
-	}
-	for i := range videoInfo {
-		fmt.Println(videoInfo[i])
-	}
 }
