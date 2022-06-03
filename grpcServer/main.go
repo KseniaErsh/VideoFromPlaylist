@@ -1,7 +1,7 @@
 package main
 
 import (
-	pb "GitHub/VideoFromPlaylist/proto"
+	pb "KseniaErsh/VideoFromPlaylist/proto"
 	"context"
 	"encoding/json"
 	"errors"
@@ -29,7 +29,9 @@ func (s *GRPCServer) GetPlaylistItems(ctx context.Context, req *pb.Request) (*pb
 	log.Printf("Received: %v", playlistId)
 	videoInfo, err := GetPlaylistItems(playlistId)
 	if err != nil {
-		log.Fatalf(" %v", err)
+		return &pb.Response{
+			VideoList: nil,
+		}, nil
 	}
 	return &pb.Response{
 		VideoList: videoInfo,

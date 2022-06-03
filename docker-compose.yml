@@ -1,0 +1,22 @@
+version: '3.9'
+
+# создём сервисы
+services:
+  grpc-server:
+    # настройки сборки
+    build:
+      context: . # собираем из корня
+      dockerfile: ./grpcServer/Dockerfile  # указываем докерфайл
+    networks:
+      default: # даём доступ к сети хоста
+    ports:
+      - 50051:50051 # прокидываем порт из контейнера
+  web-server:
+    # настройки сборки
+    build:
+      context: . # собираем из корня
+      dockerfile: ./webServer/Dockerfile # указываем докерфайл
+    networks:
+      default:  # даём доступ к сети хоста (default)
+    ports:
+      - 8080:8080 # прокидываем порт из контейнера

@@ -1,7 +1,7 @@
 package main
 
 import (
-	pb "GitHub/VideoFromPlaylist/proto"
+	pb "KseniaErsh/VideoFromPlaylist/proto"
 	"context"
 	"flag"
 	"fmt"
@@ -34,10 +34,13 @@ func getVideoList() []string {
 	defer cancel()
 	r, err := c.GetPlaylistItems(ctx, &pb.Request{PlaylistID: playlistId})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Fatalf("%v", err)
 		return nil
 	}
 	result := r.GetVideoList()
+	if len(result) < 1 {
+		return nil
+	}
 	return result
 }
 
@@ -49,7 +52,7 @@ func main() {
 
 //Отображение основной страницы
 func home_page(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("webServer/homePage.html")
+	tmpl, err := template.ParseFiles("./webServer/homePage.html")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -58,7 +61,7 @@ func home_page(w http.ResponseWriter, r *http.Request) {
 
 //Отображение страницы с результатом
 func get_page(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("webServer/getPage.html")
+	tmpl, err := template.ParseFiles("./webServer/getPage.html")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -66,4 +69,5 @@ func get_page(w http.ResponseWriter, r *http.Request) {
 	playlistId = id
 	videoList := getVideoList()
 	tmpl.Execute(w, videoList)
+
 }
