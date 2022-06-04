@@ -1,7 +1,6 @@
 package main
 
 import (
-	pb "KseniaErsh/VideoFromPlaylist/proto"
 	"context"
 	"flag"
 	"fmt"
@@ -9,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	pb "github.com/KseniaErsh/VideoFromPlaylist/proto"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

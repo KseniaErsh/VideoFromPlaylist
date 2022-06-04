@@ -1,7 +1,6 @@
 package main
 
 import (
-	pb "KseniaErsh/VideoFromPlaylist/proto"
 	"context"
 	"encoding/json"
 	"errors"
@@ -12,6 +11,8 @@ import (
 	"net"
 	"net/http"
 	"strconv"
+
+	pb "github.com/KseniaErsh/VideoFromPlaylist/proto"
 
 	"google.golang.org/grpc"
 )
