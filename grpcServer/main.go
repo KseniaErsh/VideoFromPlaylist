@@ -54,8 +54,8 @@ func main() {
 }
 
 const YOUTUNE_PLAYLIST_ITEMS_URL = "https://www.googleapis.com/youtube/v3/playlistItems"
-const YOUTUBE_API_KEY = "AIzaSyBvw_EMjvevGfsD9BlblDmlvFZ6fue7vIs"
 const YOUTUBE_VIDEO_URL = "https://www.youtube.com/watch?v="
+const YOUTUBE_API_KEY = "AIzaSyBvw_EMjvevGfsD9BlblDmlvFZ6fue7vIs"
 
 type RestResponse struct {
 	Items []Item `json:"items"`
