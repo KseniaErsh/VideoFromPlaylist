@@ -32,7 +32,7 @@ func (s *GRPCServer) GetPlaylistItems(ctx context.Context, req *pb.Request) (*pb
 	if err != nil {
 		return &pb.Response{
 			VideoList: nil,
-		}, nil
+		}, err
 	}
 	return &pb.Response{
 		VideoList: videoInfo,
@@ -43,13 +43,13 @@ func main() {
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Printf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
 	pb.RegisterGetVideoListServer(s, &GRPCServer{})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		log.Printf("failed to serve: %v", err)
 	}
 }
 
@@ -114,7 +114,7 @@ func retrieveVideos(playlistID string) ([]Item, error) {
 	var restResponse RestResponse
 	err = json.Unmarshal(body, &restResponse)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return nil, err
 	}
 	return restResponse.Items, nil

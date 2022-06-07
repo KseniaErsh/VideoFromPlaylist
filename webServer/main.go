@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -25,8 +24,8 @@ func getVideoList() []string {
 	flag.Parse()
 	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
-		return nil
+		log.Printf("did not connect: %v", err)
+		return []string{"Connection error"}
 	}
 	defer conn.Close()
 	c := pb.NewGetVideoListClient(conn)
@@ -35,12 +34,12 @@ func getVideoList() []string {
 	defer cancel()
 	r, err := c.GetPlaylistItems(ctx, &pb.Request{PlaylistID: playlistId})
 	if err != nil {
-		log.Fatalf("%v", err)
-		return nil
+		log.Println(err)
+		return []string{"Connection error"}
 	}
 	result := r.GetVideoList()
 	if len(result) < 1 {
-		return nil
+		return []string{"Video not found"}
 	}
 	return result
 }
@@ -55,7 +54,7 @@ func main() {
 func home_page(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("./webServer/homePage.html")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	tmpl.Execute(w, nil)
 }
@@ -64,7 +63,7 @@ func home_page(w http.ResponseWriter, r *http.Request) {
 func get_page(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("./webServer/getPage.html")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	id := r.FormValue("playlistId")
 	playlistId = id
